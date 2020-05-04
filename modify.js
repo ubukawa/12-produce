@@ -492,6 +492,8 @@ const lut = {
       case 'airport':
       case 'bus_station':
       case 'ferry_terminal':
+      case 'pedestrian':
+      case 'service':
         f.properties.amenity = f.properties.fclass
         break
       case 'aerodrome':
