@@ -206,7 +206,7 @@ SELECT column_name FROM information_schema.columns
       cols = cols.rows.map(r => r.column_name).filter(r => r !== 'geom')
       cols = cols.filter(v => !propertyBlacklist.includes(v))
       // ST_AsGeoJSON(ST_Intersection(ST_MakeValid(${table}.geom), envelope.geom))
-      cols.push(`ST_AsGeoJSON(${table}.geom)`)
+      cols.push(`ST_AsGeoJSON(ST_Transform(${table}.geom),4326)`)
       await client.query(`BEGIN`)
       sql = `
 DECLARE cur CURSOR FOR 
@@ -215,7 +215,7 @@ WITH
 SELECT 
   ${cols.toString()}
 FROM ${table}
-JOIN envelope ON ${table}.geom && envelope.geom
+JOIN envelope ON ST_Transform(${table}.geom, 4326) && envelope.geom
 ` 
       cols = await client.query(sql)
       try {
